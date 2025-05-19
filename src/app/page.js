@@ -1,5 +1,5 @@
 'use client'
-import { Box, Image, Heading, Text, VStack } from "@chakra-ui/react";
+import { Box, Image, Heading, VStack } from "@chakra-ui/react";
 import React from 'react';
 import LoginInput from "@/components/loginInput";
 import { Toaster, toaster } from "@/components/ui/toaster"
@@ -12,7 +12,7 @@ export default function LoginPc() {
   const loginUsuario = async (content) => {
     router.push('/cargo');
     try {
-      const response = await axios.post(`/usuario/login`, { ...content });
+      const response = await axios.post(`/user/login`, { ...content });
       if (response.status == 200) {
         toaster.create({
           description: "Login realizado com sucesso! Redirecionando...",
@@ -20,7 +20,6 @@ export default function LoginPc() {
         });
 
         localStorage.setItem('token', response.data.response);
-        router.push('/cargo');
       } else {
         toaster.create({
           description: "Erro ao fazer login!",
@@ -43,17 +42,12 @@ export default function LoginPc() {
     <Box
       w="100%" h="100vh" display="flex" justifyContent="center" alignItems="center" 
       filter="contrast(95%)"
-      bgImage={"url(/blawhi.jpg)"}
+      bgImage={"url(/fundodelivery.png)"}
       bgSize="100% 115%"
       bgPosition="center"
       bgRepeat="no-repeat"
     >
-      <Box w="50%" display="flex" justifyContent="center" alignItems="center">
-        <Image
-          w="55%"
-          src="../../public/timasso.png"
-          alt="Loading..."
-        />
+      <Box w="55%" display="flex" justifyContent="center" alignItems="center">
       </Box>
 
       <Box
@@ -67,9 +61,6 @@ export default function LoginPc() {
             Bem-Vindo
             <span style={{ fontFamily: "monospace", fontSize: "1.2em", color: "white" }} >!</span>
           </Heading>
-          <Text m="0" fontSize="lg" color="white" opacity={0.8} >
-            Seja bem-vindo ao SITE
-          </Text>
           <LoginInput mandarDadosdofilho={receberDadosdoFilho} />
         </VStack>
       </Box>

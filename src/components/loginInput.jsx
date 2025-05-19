@@ -1,5 +1,5 @@
 'use client'
-import { Text, Button, Stack } from "@chakra-ui/react";
+import { Text, IconButton, Stack } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/react";
 import {
   PasswordInput,
@@ -41,7 +41,7 @@ export default function LoginInput({ mandarDadosdofilho }) {
   return (
     <Stack>
       <InputGroup mt="7%" startElement={<FaUser color="white" opacity={0.8} />} w="100%" >
-        <Input
+        <Input 
           variant="outline"
           placeholder="Login"
           _placeholder={{ color: "white" }}
@@ -56,35 +56,49 @@ export default function LoginInput({ mandarDadosdofilho }) {
           onChange={(e) => setPassword(e.target.value)}
         />
       </InputGroup>
-      <Text m="0" mt="1%" cursor="pointer" opacity={0.8} onClick={() => window.location.href = '/esqueci-minha-senha'} >Esqueceu a senha?</Text>
-      <Button
+      <IconButton
+        background="#521c24"
+        variant="subtle"
         onClick={mandarDados}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            mandarDados();
-          }
+            if (e.key === 'Enter') {
+                mandarDados();
+            }
         }}
-        mt="5%"
+        mt="2%"
         borderRadius={5}
         _hover={{
-          opacity: 0.9,
-          transition: "0.3s",
-        }}
+            opacity: 0.9,
+            transform: "scale(1.01)",
+            transition: "0.3s",
+          }}
         tabIndex={0}
       >Entrar
-      </Button>
-      <Text m="0" mt="1%" mb="1%" textAlign={"center"} >OU</Text>
-      <Button
+      </IconButton>
+      <IconButton
+        background="#521c24"
+        variant="subtle"
         borderRadius={5}
+        _hover={{
+            opacity: 0.9,
+            transform: "scale(1.01)",
+            transition: "0.3s",
+          }}
+          onClick={() => window.location.href = '/register'}
+        >Cadastrar
+      </IconButton>
+      <IconButton 
+        variant="plain" 
+        mt="1%" 
         _hover={{
           opacity: 0.9,
           transform: "scale(1.01)",
           transition: "0.3s",
         }}
-        onClick={() => window.location.href = '/register'}
-      >Cadastrar
-      </Button>
+        onClick={() => window.location.href = '/forgot-password'}
+        >Esqueceu a senha?
+      </IconButton>
       <Toaster />
-    </Stack>
-  );
+      </Stack>
+    );
 } 
