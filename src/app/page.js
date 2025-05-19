@@ -10,9 +10,8 @@ export default function LoginPc() {
   const router = useRouter();
 
   const loginUsuario = async (content) => {
-    router.push('/cargo');
     try {
-      const response = await axios.post(`/user/login`, { ...content });
+      const response = await axios.post(`/users/login`, { ...content });
       if (response.status == 200) {
         toaster.create({
           description: "Login realizado com sucesso! Redirecionando...",
