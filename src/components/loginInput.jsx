@@ -10,11 +10,13 @@ import { FaLock } from "react-icons/fa";
 import React from 'react';
 import { useState, useEffect } from "react";
 import { Toaster, toaster } from "@/components/ui/toaster"
+import { useRouter } from 'next/navigation'
 
 export default function LoginInput({ mandarDadosdofilho }) {
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
   const content = { email: Email, password: Password };
+  const router = useRouter();
 
   const mandarDados = async () => {
     if (!Password || !Email) {
@@ -84,7 +86,7 @@ export default function LoginInput({ mandarDadosdofilho }) {
             transform: "scale(1.01)",
             transition: "0.3s",
           }}
-          onClick={() => window.location.href = '/register'}
+          onClick={() => router.push('/register')}
         >Cadastrar
       </IconButton>
       <IconButton 

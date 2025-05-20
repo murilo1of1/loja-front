@@ -1,5 +1,5 @@
 'use client'
-import { Box, Image, Heading, VStack } from "@chakra-ui/react";
+import { Box, Heading, VStack } from "@chakra-ui/react";
 import React from 'react';
 import LoginInput from "@/components/loginInput";
 import { Toaster, toaster } from "@/components/ui/toaster"
@@ -17,7 +17,6 @@ export default function LoginPc() {
           description: "Login realizado com sucesso! Redirecionando...",
           type: "success",
         });
-
         localStorage.setItem('token', response.data.response);
       } else {
         toaster.create({
