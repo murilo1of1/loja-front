@@ -1,5 +1,5 @@
 'use client'
-import { Text, IconButton, Stack } from "@chakra-ui/react";
+import { IconButton, Stack } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/react";
 import {
   PasswordInput,
@@ -11,8 +11,10 @@ import React from 'react';
 import { useState, useEffect } from "react";
 import { Toaster, toaster } from "@/components/ui/toaster"
 import { useRouter } from 'next/navigation'
+import DialogForgotPassword from "@/components/dialogForgotPassword";
 
 export default function LoginInput({ mandarDadosdofilho }) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
   const content = { email: Email, password: Password };
@@ -97,9 +99,15 @@ export default function LoginInput({ mandarDadosdofilho }) {
           transform: "scale(1.01)",
           transition: "0.3s",
         }}
-        onClick={() => window.location.href = '/forgot-password'}
-        >Esqueceu a senha?
+        onClick={() => setIsDialogOpen(true)}
+      >
+        Esqueceu a senha?
       </IconButton>
+      <DialogForgotPassword
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
+      
       <Toaster />
       </Stack>
     );

@@ -1,23 +1,24 @@
 'use client'
 import { Box, Heading, VStack } from "@chakra-ui/react";
 import React from 'react';
+import axios from "@/utils/axios";
 import LoginInput from "@/components/loginInput";
 import { Toaster, toaster } from "@/components/ui/toaster"
-import axios from "@/utils/axios";
 import { useRouter } from 'next/navigation';
 
 export default function LoginPc() {
+  
   const router = useRouter();
 
   const loginUsuario = async (content) => {
     try {
       const response = await axios.post(`/users/login`, { ...content });
       if (response.status == 200) {
+        localStorage.setItem('token', response.data.response);
         toaster.create({
           description: "Login realizado com sucesso! Redirecionando...",
           type: "success",
         });
-        localStorage.setItem('token', response.data.response);
       } else {
         toaster.create({
           description: "Erro ao fazer login!",

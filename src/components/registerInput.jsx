@@ -64,7 +64,7 @@ export default function RegisterInput({ mandarDadosdofilho }) {
         <Input 
           mt="1%"
           variant="outline"
-          placeholder="Digite seu username"
+          placeholder="Digite seu apelido"
           onChange={(e) => setUsername(e.target.value)}
         />
         <Input 
