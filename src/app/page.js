@@ -1,69 +1,166 @@
 'use client'
-import { Box, Heading, VStack } from "@chakra-ui/react";
-import React from 'react';
-import axios from "@/utils/axios";
-import LoginInput from "@/components/loginInput";
-import { Toaster, toaster } from "@/components/ui/toaster"
-import { useRouter } from 'next/navigation';
+import { Box, Flex, Heading, Button, IconButton, Image } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import { CiLocationOn, CiUser  } from "react-icons/ci";
 
-export default function LoginPc() {
-  
+export default function HomePage() {
   const router = useRouter();
 
-  const loginUsuario = async (content) => {
-    try {
-      const response = await axios.post(`/users/login`, { ...content });
-      if (response.status == 200) {
-        localStorage.setItem('token', response.data.response);
-        toaster.create({
-          description: "Login realizado com sucesso! Redirecionando...",
-          type: "success",
-        });
-      } else {
-        toaster.create({
-          description: "Erro ao fazer login!",
-          type: "error",
-        })
-      }
-    } catch (error) {
-      toaster.create({
-        description: "ERROR!",
-        type: "error",
-      })
-    }
-  }
-
-  const receberDadosdoFilho = async (content) => {
-    await loginUsuario(content)
-  };
-
   return (
-    <Box
-      w="100%" h="100vh" display="flex" justifyContent="center" alignItems="center" 
-      filter="contrast(95%)"
-      bgImage={"url(/fundodelivery.png)"}
-      bgSize="100% 115%"
-      bgPosition="center"
-      bgRepeat="no-repeat"
-    >
-      <Box w="55%" display="flex" justifyContent="center" alignItems="center">
-      </Box>
-
-      <Box
-        w="50%"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
+    <Box minH="100vh" bgImage="url(/teladeinicio.png)" bgSize="cover" bgPosition="center" bgRepeat="no-repeat">
+      <Flex
+        as="header"
+        w="100%"
+        h="100px"
+        bg="#181824"
+        color="white"
+        align="center"
+        justify="space-between"
+        px={8}
+        boxSizing="border-box"
+        position="relative"
+        zIndex={10}
       >
-        <VStack align="left" >
-          <Heading color="white" textAlign="center" as="h1" fontSize={40} fontWeight={600} >
-            Bem-Vindo
-            <span style={{ fontFamily: "monospace", fontSize: "1.2em", color: "white" }} >!</span>
-          </Heading>
-          <LoginInput mandarDadosdofilho={receberDadosdoFilho} />
-        </VStack>
-      </Box>
-      <Toaster />
+        <Flex align="center" gap={2}>
+          <Image 
+            mr="15px"
+            ml="50px" 
+            src="/tocomfomenome.png" 
+            alt="logo"  
+            boxSize="90px"
+            objectFit="contain"></Image>
+        </Flex>
+
+        <Flex ml={-550} gap={10} fontWeight="medium" fontSize="md">
+           <IconButton
+            fontFamily="Montserrat"
+            variant="ghost"
+            color="#f6f6f6"
+            fontSize="md"
+            _hover={{ color: "#e05a6d", bg: "transparent" }}
+          >Como Funciona</IconButton>
+          <IconButton
+            fontFamily="Montserrat"
+            variant="ghost"
+            color="#f6f6f6"
+            fontSize="md"
+            _hover={{ color: "#e05a6d", bg: "transparent" }}
+            onClick={() => router.push("/about")}
+          >Sobre o restaurante</IconButton>
+           <IconButton
+            fontFamily="Montserrat"
+            variant="ghost"
+            color="#f6f6f6"
+            fontSize="md"
+            _hover={{ color: "#e05a6d", bg: "transparent" }}
+          >Avaliações</IconButton>
+          <IconButton
+            fontFamily="Montserrat"
+            variant="ghost"
+            color="#f6f6f6"
+            fontSize="md"
+            _hover={{ color: "#e05a6d", bg: "transparent" }}
+            onClick={() => router.push("/location")}
+          >Localização</IconButton>
+        </Flex>
+
+        <Flex align="center" gap={3}>
+          <IconButton
+            fontFamily="Montserrat"
+            fontWeight="bold"
+            bg="transparent"
+            variant="ghost"
+            color="#fff"
+            size="md"
+            borderRadius="md"
+            px={5}
+            _hover={{ 
+              bg: "white", 
+              color: "#e05a6d",
+              opacity: 0.9,
+              transform: "scale(1.01)",
+              transition: "0.3s", 
+            }}
+            onClick={() => router.push("/register")}
+          ><CiLocationOn />Criar Conta
+          </IconButton>
+
+          <IconButton
+            fontFamily="Montserrat"
+            fontWeight="bold"
+            bg="transparent"
+            variant="ghost"
+            color="#fff"
+            size="md"
+            borderRadius="md"
+            px={5}
+            mr="20px"
+            _hover={{ 
+              bg: "white", 
+              color: "#e05a6d",
+              opacity: 0.9,
+              transform: "scale(1.01)",
+              transition: "0.3s", 
+            }}
+            onClick={() => router.push("/login")}
+          ><CiUser />Entrar 
+          </IconButton>
+        </Flex>
+      </Flex>
+
+      <Flex
+        w="100%"
+        h={`calc(100vh - 70px)`}
+        align="center"
+        justify="space-between"
+        px={16}
+        py={8}>
+        <Box display="flex">
+          <Box>
+            <Heading
+              fontFamily="Montserrat"
+              as="h1"
+              fontSize="3xl"
+              color="#fff"
+              fontWeight="bold"
+              ml={55}
+              mt={-130}
+            >
+              A comida que você ama, na sua casa!
+            </Heading>
+           <Button
+              fontFamily="Montserrat"
+              w="180px"
+              bg= "#e05a6d" 
+              color= "white"
+              size="lg"
+              fontSize="lg"
+              fontWeight="700"
+              borderRadius="md"
+              mt={4} 
+              ml={55}
+              _hover={{
+                opacity: 0.9,
+                transform: "scale(1.01)",
+                transition: "0.3s",
+              }}
+              onClick={() => router.push("/login")}
+            >
+              Quero comer!
+            </Button>  
+          </Box>
+
+        </Box>
+        <Box display="flex" justifyContent="flex-end">
+          <Image
+            src="/tocomfomelogo-removebg.png"
+            alt="Logo grande"
+            boxSize="490px"
+            mr={95}
+          />
+        </Box>
+      </Flex>
+
     </Box>
   );
-} 
+}

@@ -31,17 +31,6 @@ export default function LoginInput({ mandarDadosdofilho }) {
     mandarDadosdofilho(content);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Enter') {
-        mandarDados();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [mandarDados]);
-
-
   return (
     <Stack>
       <InputGroup mt="7%" startElement={<FaUser color="white" opacity={0.8} />} w="100%" >
@@ -61,7 +50,8 @@ export default function LoginInput({ mandarDadosdofilho }) {
         />
       </InputGroup>
       <IconButton
-        background="#521c24"
+        bg= "#e05a6d" 
+        color= "white"
         variant="subtle"
         onClick={mandarDados}
         onKeyDown={(e) => {
@@ -77,10 +67,12 @@ export default function LoginInput({ mandarDadosdofilho }) {
             transition: "0.3s",
           }}
         tabIndex={0}
+        fontWeight="bold"
       >Entrar
       </IconButton>
       <IconButton
-        background="#521c24"
+        bg= "#e05a6d" 
+        color= "white"
         variant="subtle"
         borderRadius={5}
         _hover={{
@@ -88,6 +80,7 @@ export default function LoginInput({ mandarDadosdofilho }) {
             transform: "scale(1.01)",
             transition: "0.3s",
           }}
+          fontWeight="bold"
           onClick={() => router.push('/register')}
         >Cadastrar
       </IconButton>
@@ -100,6 +93,7 @@ export default function LoginInput({ mandarDadosdofilho }) {
           transition: "0.3s",
         }}
         onClick={() => setIsDialogOpen(true)}
+        fontWeight="bold"
       >
         Esqueceu a senha?
       </IconButton>

@@ -5,18 +5,18 @@ import {
   Portal,
   Box,
   VStack,
-  Stack,
   Input
 } from "@chakra-ui/react";
 import { FormLabel } from "@chakra-ui/form-control";
 import axios from "@/utils/axios";
 import { useState } from "react";
+import { Toaster, toaster } from "@/components/ui/toaster"
 
 export default function DialogForgotPassword({ isOpen, onClose }) {
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
-  const [code, setCode] = useState('');
+  const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
   const sendEmail = async () => {
@@ -26,11 +26,17 @@ export default function DialogForgotPassword({ isOpen, onClose }) {
       if (response.status === 200) {
         setStep(2);
       } else {
-        alert('Erro ao enviar o e-mail. Por favor, tente novamente.');
+        toaster.create({
+        title: "Erro ao enviar o e-mail. Por favor, tente novamente.",
+        type: "error"
+      })
       }
     } catch (error) {
       console.error("Erro ao enviar o e-mail:", error);
-      alert('Ocorreu um erro. Por favor, tente novamente.');
+      toaster.create({
+        title: "Erro ao enviar o e-mail!",
+        type: "error"
+      });
     }finally {
       setIsLoading(false);
     } 
@@ -38,12 +44,18 @@ export default function DialogForgotPassword({ isOpen, onClose }) {
 
   const resetPassword = async () => {
     try {
-      const response = await axios.api.post('/users/reset-password', { code, newPassword });
+      const response = await axios.post('/users/reset-password', { token, newPassword });
       if (response.status === 200) {
-        alert('Senha alterada com sucesso!');
+        toaster.create({
+        title: "Senha alterada com sucesso!",
+        type: "success"
+      });
         onClose();
       } else {
-        alert('Erro ao alterar a senha. Verifique o código e tente novamente.');
+        toaster.create({
+          title:'Erro ao alterar a senha. Verifique o código e tente novamente.',
+          type: "error"
+        });
       }
     } catch (error) {
       console.error("Erro ao redefinir a senha:", error);
@@ -70,34 +82,30 @@ export default function DialogForgotPassword({ isOpen, onClose }) {
                 <VStack spacing={4}>
                   {step === 1 && (
                     <>
-                      <FormLabel htmlFor="email">E-mail</FormLabel>
+                      <FormLabel htmlFor="email"></FormLabel>
                       <Input
                         id="email"
                         placeholder="Digite seu e-mail"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                       />
-                    <Stack direction="row" gap="4" align="center">
                       <Button  
                         background="#542129" 
                         w="100%" 
                         onClick={sendEmail} 
-                        color="white"
-                        isLoading={isLoading}
-                        loadingText="Enviando...">
+                        color="white">
                             Enviar código
                       </Button>
-                    </Stack>  
                     </>
                   )}
                   {step === 2 && (
                     <>
-                      <FormLabel htmlFor="code">Código de recuperação</FormLabel>
+                      <FormLabel htmlFor="token">Código de recuperação</FormLabel>
                       <Input
-                        id="code"
+                        id="token"
                         placeholder="Digite o código recebido"
-                        value={code}
-                        onChange={e => setCode(e.target.value)}
+                        value={token}
+                        onChange={e => setToken(e.target.value)}
                       />
                       <FormLabel htmlFor="new-password">Nova senha</FormLabel>
                       <Input
@@ -107,7 +115,7 @@ export default function DialogForgotPassword({ isOpen, onClose }) {
                         value={newPassword}
                         onChange={e => setNewPassword(e.target.value)}
                       />
-                      <Button background="#542129" w="100%" onClick={resetPassword}>
+                      <Button color="white" background="#542129" w="100%" onClick={resetPassword}>
                         Redefinir senha
                       </Button>
                     </>
@@ -116,7 +124,6 @@ export default function DialogForgotPassword({ isOpen, onClose }) {
               </Box>
             </Dialog.Body>
             <Dialog.Footer>
-              <Button background="#542129" variant="outline" onClick={onClose}>Cancelar</Button>
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>
               <CloseButton size="sm" />

@@ -31,27 +31,22 @@ export default function RegisterInput({ mandarDadosdofilho }) {
   const router = useRouter();
   
   
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const mandarDados = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     if (!Password || !Email || !Name || !Phone || !Username || !CPF || !Role) {
       toaster.create({
         title: "Preencha todos os valores!",
         type: "error"
-      })
+      });
+      setIsSubmitting(false);
       return;
     }
-    mandarDadosdofilho(content);
+    await mandarDadosdofilho(content);
+    setIsSubmitting(false);
   };
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Enter') {
-        mandarDados();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [mandarDados]);
-
 
   return (
       <Stack>
@@ -123,8 +118,16 @@ export default function RegisterInput({ mandarDadosdofilho }) {
         />
       </InputGroup>
       <IconButton
-        background="#207830"
+        bg= "#e05a6d" 
+        color= "white"
         variant="subtle"
+        borderRadius={5}
+        _hover={{
+            opacity: 0.9,
+            transform: "scale(1.01)",
+            transition: "0.3s",
+          }}
+        fontWeight="bold"
         onClick={mandarDados}
         onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -132,13 +135,9 @@ export default function RegisterInput({ mandarDadosdofilho }) {
             }
         }}
         mt="1%"
-        borderRadius={5}
-        _hover={{
-            opacity: 0.9,
-            transform: "scale(1.01)",
-            transition: "0.3s",
-          }}
         tabIndex={0}
+        isLoading={isSubmitting}
+        disabled={isSubmitting}
       >Confirmar
       </IconButton>
       <Toaster />
