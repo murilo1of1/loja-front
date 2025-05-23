@@ -1,4 +1,5 @@
 import {
+  IconButton,
   Button,
   CloseButton,
   Dialog,
@@ -73,9 +74,9 @@ export default function DialogForgotPassword({ isOpen, onClose }) {
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          <Dialog.Content bg="#181824">
             <Dialog.Header>
-              <Dialog.Title>Esqueci minha senha</Dialog.Title>
+              <Dialog.Title fontFamily="Montserrat">Esqueci minha senha</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
               <Box>
@@ -83,19 +84,24 @@ export default function DialogForgotPassword({ isOpen, onClose }) {
                   {step === 1 && (
                     <>
                       <FormLabel htmlFor="email"></FormLabel>
-                      <Input
+                      <Input  
+                        fontFamily="Montserrat"
                         id="email"
                         placeholder="Digite seu e-mail"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                       />
-                      <Button  
-                        background="#542129" 
+                      <IconButton  
+                        background="#db5c6e" 
                         w="100%" 
+                        fontFamily="Montserrat"
                         onClick={sendEmail} 
-                        color="white">
+                        color="white"
+                        _hover={{opacity: 0.9,
+                                 transform: "scale(1.01)",
+                                 transition: "0.3s",}}>
                             Enviar código
-                      </Button>
+                      </IconButton>
                     </>
                   )}
                   {step === 2 && (
@@ -115,7 +121,15 @@ export default function DialogForgotPassword({ isOpen, onClose }) {
                         value={newPassword}
                         onChange={e => setNewPassword(e.target.value)}
                       />
-                      <Button color="white" background="#542129" w="100%" onClick={resetPassword}>
+                      <Button 
+                        fontFamily="Montserrat" 
+                        color="white" 
+                        background="#db5c6e" 
+                        w="100%" 
+                        onClick={resetPassword}
+                        _hover={{opacity: 0.9,
+                                 transform: "scale(1.01)",
+                                 transition: "0.3s",}}>
                         Redefinir senha
                       </Button>
                     </>

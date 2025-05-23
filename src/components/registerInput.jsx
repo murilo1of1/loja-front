@@ -21,7 +21,6 @@ export default function RegisterInput({ mandarDadosdofilho }) {
 
   const rolesCollection = createListCollection({
     items: [
-      { label: "Administrador", value: "admin" },
       { label: "Entregador", value: "delivery" },
       { label: "Usuário", value: "user" }
     ],
@@ -77,8 +76,8 @@ export default function RegisterInput({ mandarDadosdofilho }) {
         <Select.Root
             mt="%1"
             collection={rolesCollection}
-            width="320px"
-            onValueChange={(value) => setRole(value.value[0])}
+            width="100%"
+            on  ValueChange={(value) => setRole(value.value[0])}
             >
             <Select.HiddenSelect />
             <Select.Control>

@@ -68,7 +68,7 @@ export default function LoginPc() {
         alignItems="center"
       >
         <VStack align="left" >
-          <Heading color="white" textAlign="center" as="h1" fontSize={40} fontWeight={600} >
+          <Heading fontFamily="Montserrat" color="white" textAlign="center" as="h1" fontSize={40} fontWeight={600} >
             Bem-Vindo
             <span style={{ fontFamily: "monospace", fontSize: "1.2em", color: "white" }} >!</span>
           </Heading>

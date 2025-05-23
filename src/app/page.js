@@ -31,7 +31,7 @@ export default function HomePage() {
             objectFit="contain"></Image>
         </Flex>
 
-        <Flex ml={-550} gap={10} fontWeight="medium" fontSize="md">
+        <Flex ml={-660} gap={8} fontWeight="medium" fontSize="md">
            <IconButton
             fontFamily="Montserrat"
             variant="ghost"
@@ -47,13 +47,6 @@ export default function HomePage() {
             _hover={{ color: "#e05a6d", bg: "transparent" }}
             onClick={() => router.push("/about")}
           >Sobre o restaurante</IconButton>
-           <IconButton
-            fontFamily="Montserrat"
-            variant="ghost"
-            color="#f6f6f6"
-            fontSize="md"
-            _hover={{ color: "#e05a6d", bg: "transparent" }}
-          >Avaliações</IconButton>
           <IconButton
             fontFamily="Montserrat"
             variant="ghost"

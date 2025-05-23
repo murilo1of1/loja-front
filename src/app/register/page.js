@@ -60,7 +60,7 @@ export default function Register() {
           minW="350px"
         >
           <VStack align="left" spacing={6}>
-            <Heading color="white" textAlign="center" as="h1" fontSize={32} fontWeight={600}>
+            <Heading fontFamily="Montserrat" color="white" textAlign="center" as="h1" fontSize={32} fontWeight={600}>
               Preencha seus dados!
             </Heading>
             <RegisterInput mandarDadosdofilho={receberDadosdoFilho} />

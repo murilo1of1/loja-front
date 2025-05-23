@@ -101,7 +101,6 @@ export default function LoginInput({ mandarDadosdofilho }) {
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
       />
-      
       <Toaster />
       </Stack>
     );

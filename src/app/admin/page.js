@@ -7,24 +7,29 @@ import api from "@/utils/axios";
 import { useEffect, useState } from "react";
 import TabelaProdutos from "@/components/tableProducts";
 import InputPesquisa from "@/components/inputPesquisa";
+import { IoAdd } from "react-icons/io5";
+import DialogCreateProduct from "@/components/dialogCreateProduct";
 
 export default function Admin() {
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
-  
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const getProducts = async () => {
+    try {
+      const res = await api.get("/product");
+      setProducts(res.data.data || []);
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
+    }
+  };
+
   useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const res = await api.get("/product");
-        setProducts(res.data.data || []);
-      } catch (error) {
-        console.error("Erro ao buscar produtos:", error);
-      }
-    };
     getProducts();
   }, []);
-
+  
+  
   const filteredProducts = products.filter(
     (item) =>
       item.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -140,10 +145,38 @@ export default function Admin() {
           flexDirection="column"
           w="100%"
         >
-           <Box w="100%" maxW="900px" mx="auto" mb={1}>
+           <Box w="100%" display="flex" maxW="900px" mx="auto" mb={1}>
             <InputPesquisa
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+            />
+            <IconButton
+              fontFamily="Montserrat"
+              fontWeight="bold"
+              bg="#e05a6d"
+              color="#fff"
+              size="sm"
+              borderRadius="md"
+              h="40px"
+              ml={1}
+              mb={-2} 
+              mt={1}
+              px={5}
+              _hover={{ 
+                bg: "#f6f6f6", 
+                color: "#e05a6d",
+                opacity: 0.9,
+                transform: "scale(1.01)",
+                transition: "0.3s", 
+              }}
+              onClick={() => setIsDialogOpen(true)}
+             >
+              <IoAdd />
+            </IconButton>
+            <DialogCreateProduct
+              isOpen={isDialogOpen}
+              onClose={() => setIsDialogOpen(false)}
+              onCreated={getProducts}
             />
           </Box>
           <TabelaProdutos items={filteredProducts} />

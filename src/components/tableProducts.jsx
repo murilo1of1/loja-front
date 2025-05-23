@@ -15,6 +15,9 @@ export default function TabelaProdutos({ items }) {
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader fontFamily="Montserrat" textAlign="center" fontWeight="bold" fontSize="lg" color="#e05a6d">
+              
+            </Table.ColumnHeader>
+            <Table.ColumnHeader fontFamily="Montserrat" textAlign="center" fontWeight="bold" fontSize="lg" color="#e05a6d">
               Nome
             </Table.ColumnHeader>
             <Table.ColumnHeader fontFamily="Montserrat" textAlign="center" fontWeight="bold" fontSize="lg" color="#e05a6d">
@@ -23,14 +26,16 @@ export default function TabelaProdutos({ items }) {
             <Table.ColumnHeader fontFamily="Montserrat" textAlign="center" fontWeight="bold" fontSize="lg" color="#e05a6d">
               Preço
             </Table.ColumnHeader>
-            <Table.ColumnHeader fontFamily="Montserrat" textAlign="center" fontWeight="bold" fontSize="lg" color="#e05a6d">
-              Imagem
-            </Table.ColumnHeader>
-          </Table.Row>
+          </Table.Row> 
         </Table.Header>
         <Table.Body>
           {items.map((item) => (
-            <Table.Row key={item.id} _hover={{ bg: "#2d2d44"}}>
+            <Table.Row key={item.id} _hover={{ bg: "#2d2d44", borderRadius: 10}}>
+              <Table.Cell display="flex" justifyContent="center">
+                {item.image && (
+                  <img src={item.image} style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 12 }} />
+                )}
+              </Table.Cell>
               <Table.Cell fontFamily="Montserrat" textAlign="center" fontSize="md" color="#fff">
                 {item.name}
               </Table.Cell>
@@ -39,11 +44,6 @@ export default function TabelaProdutos({ items }) {
               </Table.Cell>
               <Table.Cell textAlign="center" fontFamily="Montserrat" fontSize="md" color="#fff">
                 R$ {Number(item.price).toFixed(2)}
-              </Table.Cell>
-              <Table.Cell display="flex" justifyContent="center">
-                {item.image && (
-                  <img src={item.image} style={{ width: 100, height: 100, objectFit: "cover", borderRadius: 8 }} />
-                )}
               </Table.Cell>
             </Table.Row>
           ))}
