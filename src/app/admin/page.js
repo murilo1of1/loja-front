@@ -9,12 +9,24 @@ import TabelaProdutos from "@/components/tableProducts";
 import InputPesquisa from "@/components/inputPesquisa";
 import { IoAdd } from "react-icons/io5";
 import DialogCreateProduct from "@/components/dialogCreateProduct";
+import TabelaCupoms from "@/components/tableCupoms";
+import DialogCreateCupom from "@/components/dialogCreateCupom";
+import ConfirmDialog from "@/components/dialogDeleteConfirmation";
 
 export default function Admin() {
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogProductOpen, setIsDialogProductOpen] = useState(false);
+  const [isDialogCupomOpen, setIsDialogCupomOpen] = useState(false);
+  const [activeStep, setActiveStep] = useState("pedidos");
+  const [cupoms, setCupoms] = useState([]);
+  const [editingCupom, setEditingCupom] = useState(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [cupomIdToDelete, setCupomIdToDelete] = useState(null);
+  const [isDeleteProductOpen, setIsDeleteProductOpen] = useState(false);
+  const [productIdToDelete, setProductIdToDelete] = useState(null);
+  const [editingProduct, setEditingProduct] = useState(null);
 
   const getProducts = async () => {
     try {
@@ -25,16 +37,67 @@ export default function Admin() {
     }
   };
 
+  const getCupoms = async () => {
+    try {
+      const res = await api.get("/cupom");
+      setCupoms(res.data.data || []);
+    } catch (error) {
+      console.error("Erro ao buscar cupons:", error);
+    }
+  };
+
   useEffect(() => {
     getProducts();
+    getCupoms();
   }, []);
-  
+
+  const EditCupom = (cupom) => {
+    setEditingCupom(cupom);
+    setIsDialogCupomOpen(true);
+  };
+
+  const EditProduct = (product) => {
+    setEditingProduct(product);
+    setIsDialogProductOpen(true);
+  };
+
+  const DeleteCupomClick = (id) => {
+    setCupomIdToDelete(id);
+    setIsDeleteOpen(true);
+  };
+
+  const DeleteProductClick = (id) => {
+    setProductIdToDelete(id);
+    setIsDeleteProductOpen(true);
+  };
+
+  const DeleteCupom = async () => {
+    await api.delete(`/cupom/${cupomIdToDelete}`);
+    setIsDeleteOpen(false);
+    setCupomIdToDelete(null);
+    getCupoms();
+  };
+
+  const DeleteProduct = async () => {
+    await api.delete(`/product/${productIdToDelete}`);
+    setIsDeleteProductOpen(false);
+    setProductIdToDelete(null);
+    getProducts();
+  };
   
   const filteredProducts = products.filter(
     (item) =>
       item.name?.toLowerCase().includes(search.toLowerCase()) ||
       item.description?.toLowerCase().includes(search.toLowerCase())
   );
+
+  const filteredCupoms = cupoms.filter(
+    (item) =>
+      item.code?.toLowerCase().includes(search.toLowerCase()) ||
+      String(item.value)?.toLowerCase().includes(search.toLowerCase()) ||
+      item.type?.toLowerCase().includes(search.toLowerCase())
+);
+
 
   return (
     <Box minH="100vh" bgImage="url(/teladeinicio.png)" bgSize="cover" bgPosition="center" bgRepeat="no-repeat">
@@ -117,20 +180,33 @@ export default function Admin() {
             <Button
               leftIcon={<FaReceipt />}
               variant="ghost"
-              color="#fff"
+              color={activeStep === "pedidos" ? "#e05a6d" : "#fff"}
               fontFamily="Montserrat"
               justifyContent="flex-start"
               _hover={{ bg: "#23233a", color: "#e05a6d" }}
+              onClick={() => setActiveStep("pedidos")}
             >
               Pedidos
             </Button>
             <Button
-              leftIcon={<FaTicketAlt />}
+              leftIcon={<FaReceipt />}
               variant="ghost"
-              color="#fff"
+              color={activeStep === "produtos" ? "#e05a6d" : "#fff"}
               fontFamily="Montserrat"
               justifyContent="flex-start"
               _hover={{ bg: "#23233a", color: "#e05a6d" }}
+              onClick={() => setActiveStep("produtos")}
+            >
+              Produtos
+            </Button>
+            <Button
+              leftIcon={<FaTicketAlt />}
+              variant="ghost"
+              color={activeStep === "cupons" ? "#e05a6d" : "#fff"}
+              fontFamily="Montserrat"
+              justifyContent="flex-start"
+              _hover={{ bg: "#23233a", color: "#e05a6d" }}
+              onClick={() => setActiveStep("cupons")}
             >
               Cupons
             </Button>
@@ -145,41 +221,119 @@ export default function Admin() {
           flexDirection="column"
           w="100%"
         >
-           <Box w="100%" display="flex" maxW="900px" mx="auto" mb={1}>
-            <InputPesquisa
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <IconButton
-              fontFamily="Montserrat"
-              fontWeight="bold"
-              bg="#e05a6d"
-              color="#fff"
-              size="sm"
-              borderRadius="md"
-              h="40px"
-              ml={1}
-              mb={-2} 
-              mt={1}
-              px={5}
-              _hover={{ 
-                bg: "#f6f6f6", 
-                color: "#e05a6d",
-                opacity: 0.9,
-                transform: "scale(1.01)",
-                transition: "0.3s", 
-              }}
-              onClick={() => setIsDialogOpen(true)}
-             >
-              <IoAdd />
-            </IconButton>
-            <DialogCreateProduct
-              isOpen={isDialogOpen}
-              onClose={() => setIsDialogOpen(false)}
-              onCreated={getProducts}
-            />
-          </Box>
-          <TabelaProdutos items={filteredProducts} />
+          {activeStep === "pedidos" && (
+            <Box>
+              //tabela pedidos 
+            </Box>
+          )}
+          {activeStep === "produtos" && (
+            <>
+              <Box w="100%" display="flex" maxW="900px" mx="auto" mb={1}>
+                <InputPesquisa
+                  placeholder="Pesquisar produtos..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <IconButton
+                  fontFamily="Montserrat"
+                  fontWeight="bold"
+                  bg="#e05a6d"
+                  color="#fff"
+                  size="sm"
+                  borderRadius="md"
+                  h="40px"
+                  ml={1}
+                  mb={-2}
+                  mt={1}
+                  px={5}
+                  _hover={{
+                    bg: "#f6f6f6",
+                    color: "#e05a6d",
+                    opacity: 0.9,
+                    transform: "scale(1.01)",
+                    transition: "0.3s",
+                  }}
+                  onClick={() => setIsDialogProductOpen(true)}
+                >
+                  <IoAdd />
+                </IconButton>
+                <DialogCreateProduct
+                  isOpen={isDialogProductOpen}
+                  onClose={() => {
+                    setIsDialogProductOpen(false);
+                    setEditingProduct(null);
+                  }}
+                  onCreated={getProducts}
+                  editingProduct={editingProduct}
+                />
+              </Box>
+              <TabelaProdutos 
+                items={filteredProducts}
+                onDelete={DeleteProductClick}
+                onEdit={EditProduct} />
+              <ConfirmDialog
+                isOpen={isDeleteProductOpen}
+                onClose={() => setIsDeleteProductOpen(false)}
+                onConfirm={DeleteProduct}
+                title="Excluir produto"
+                description="Você tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita."
+              />
+            </>
+          )}
+          {activeStep === "cupons" && (
+            <>
+              <Box w="100%" display="flex" maxW="900px" mx="auto" mb={1}>
+                <InputPesquisa
+                  placeholder="Pesquisar cupons..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <IconButton
+                  fontFamily="Montserrat"
+                  fontWeight="bold"
+                  bg="#e05a6d"
+                  color="#fff"
+                  size="sm"
+                  borderRadius="md"
+                  h="40px"
+                  ml={1}
+                  mb={-2}
+                  mt={1}
+                  px={5}
+                  _hover={{
+                    bg: "#f6f6f6",
+                    color: "#e05a6d",
+                    opacity: 0.9,
+                    transform: "scale(1.01)",
+                    transition: "0.3s",
+                  }}
+                  onClick={() => setIsDialogCupomOpen(true)}
+                >
+                  <IoAdd />
+                </IconButton>
+                <DialogCreateCupom
+                  isOpen={isDialogCupomOpen}
+                  onClose={() => {
+                    setIsDialogCupomOpen(false);
+                    setEditingCupom(null);
+                  }}
+                  onCreated={getCupoms}
+                  editingCupom={editingCupom}
+                />
+              </Box>
+              <TabelaCupoms 
+                items={filteredCupoms}
+                onEdit={EditCupom}
+                onDelete={DeleteCupomClick} />
+              <ConfirmDialog
+                isOpen={isDeleteOpen}
+                title="Excluir cupom"
+                description="Você tem certeza que deseja excluir este cupom? Esta ação não pode ser desfeita."
+                onClose={() => setIsDeleteOpen(false)}
+                onConfirm={DeleteCupom}>
+              </ConfirmDialog>  
+            </>
+          )}
         </Box>
       </Flex>
     </Box>

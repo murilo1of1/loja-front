@@ -1,7 +1,7 @@
 import { Table, Box, IconButton } from "@chakra-ui/react";
 import { MdEdit, MdDelete } from "react-icons/md";
 
-export default function TabelaProdutos({ items, onDelete, onEdit }) { 
+export default function TabelaCupoms({ items, onEdit, onDelete }) {
   return (
     <Box
       w="100%"
@@ -16,35 +16,33 @@ export default function TabelaProdutos({ items, onDelete, onEdit }) {
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader fontFamily="Montserrat" textAlign="center" fontWeight="bold" fontSize="lg" color="#e05a6d">
-              
-            </Table.ColumnHeader>
-            <Table.ColumnHeader fontFamily="Montserrat" textAlign="center" fontWeight="bold" fontSize="lg" color="#e05a6d">
               Nome
             </Table.ColumnHeader>
             <Table.ColumnHeader fontFamily="Montserrat" textAlign="center" fontWeight="bold" fontSize="lg" color="#e05a6d">
-              Descrição
+              Tipo
             </Table.ColumnHeader>
             <Table.ColumnHeader fontFamily="Montserrat" textAlign="center" fontWeight="bold" fontSize="lg" color="#e05a6d">
-              Preço
+              Valor
+            </Table.ColumnHeader>
+            <Table.ColumnHeader fontFamily="Montserrat" textAlign="center" fontWeight="bold" fontSize="lg" color="#e05a6d">
+              Usos disponíveis
             </Table.ColumnHeader>
           </Table.Row> 
         </Table.Header>
         <Table.Body>
           {items.map((item) => (
             <Table.Row key={item.id} _hover={{ bg: "#2d2d44", borderRadius: 10}}>
-              <Table.Cell display="flex" justifyContent="center">
-                {item.image && (
-                  <img src={item.image} style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 12 }} />
-                )}
+              <Table.Cell fontFamily="Montserrat" textAlign="center" fontSize="md" color="#fff">
+                {item.code}
               </Table.Cell>
               <Table.Cell fontFamily="Montserrat" textAlign="center" fontSize="md" color="#fff">
-                {item.name}
+                {item.type}
               </Table.Cell>
               <Table.Cell fontFamily="Montserrat" textAlign="center" fontSize="md" color="#fff">
-                {item.description}
+                {item.type === "porcentagem" ? `%${item.value}` : item.value}
               </Table.Cell>
-              <Table.Cell textAlign="center" fontFamily="Montserrat" fontSize="md" color="#fff">
-                R$ {Number(item.price).toFixed(2)}
+              <Table.Cell fontFamily="Montserrat" textAlign="center" fontSize="md" color="#fff">
+                {item.uses}
               </Table.Cell>
               <Table.Cell textAlign="center">
                 <IconButton
@@ -52,7 +50,7 @@ export default function TabelaProdutos({ items, onDelete, onEdit }) {
                   size="sm"
                   bg= "transparent"
                   color= "#e05a6d"
-                  
+                  ml={-10}
                   _hover={{
                     opacity: 0.9,
                     transform: "scale(1.09)",

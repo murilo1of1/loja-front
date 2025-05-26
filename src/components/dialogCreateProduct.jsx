@@ -18,7 +18,7 @@ import { LuUpload } from "react-icons/lu";
 import api from "@/utils/axios";
 import { useState, useEffect } from "react";
 
-export default function DialogCreateProduct({ isOpen, onClose, onCreated }) {
+export default function DialogCreateProduct({ isOpen, onClose, onCreated, editingProduct }) {
   const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
   const [preco, setPreco] = useState('');
@@ -26,16 +26,20 @@ export default function DialogCreateProduct({ isOpen, onClose, onCreated }) {
   const [imagem, setImagem] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (!isOpen) {
+    useEffect(() => {
+    if (isOpen && editingProduct) {
+      setNome(editingProduct.name || '');
+      setDescricao(editingProduct.description || '');
+      setPreco(editingProduct.price || '');
+      setImagem(editingProduct.image || '');
+    } else if (isOpen && !editingProduct) {
       setNome('');
       setDescricao('');
       setPreco('');
-      setCategoria('');
       setImagem('');
-      setIsLoading(false);
     }
-  }, [isOpen]);
+    setIsLoading(false);
+  }, [isOpen, editingProduct]);
 
   const categoriasCollection = createListCollection({
     items: [
@@ -55,7 +59,7 @@ export default function DialogCreateProduct({ isOpen, onClose, onCreated }) {
   }
 };
 
-  const handleCreate = async () => {
+  const handleCreateOrEdit = async () => {
   setIsLoading(true);
   try {
     const formData = new FormData();
@@ -65,32 +69,38 @@ export default function DialogCreateProduct({ isOpen, onClose, onCreated }) {
     formData.append("idCategory", String(categoria));
     if (imagem instanceof File) {
       formData.append("image", imagem);
-      console.log("Arquivo enviado:", imagem);
     }
 
-    const response = await api.post('/product', formData, {
-      headers: { "Content-Type": "multipart/form-data" }
-    });
+    let response;
+    if (editingProduct) {
+      response = await api.patch(`/product/${editingProduct.id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+    } else {
+      response = await api.post('/product', formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+    }
 
     if (response.status === 200 || response.status === 201) {
       toaster.create({
-        title: "Produto criado com sucesso!",
+        title: editingProduct ? "Produto atualizado com sucesso!" : "Produto criado com sucesso!",
         type: "success",
       });
       if (onCreated) onCreated();
       onClose();
     } else {
       toaster.create({
-        title: "Erro ao criar produto.",
+        title: editingProduct ? "Erro ao atualizar produto." : "Erro ao criar produto.",
         type: "error",
       });
-    }
-  } catch (error) {
+     } 
+   } catch (error) {
     toaster.create({
-      title: "Erro ao criar produto.",
+      title: editingProduct ? "Erro ao atualizar produto." : "Erro ao criar produto.",
       status: "error",
-    });
-  } finally {
+     });
+   } finally {
     setIsLoading(false);
   }
 };
@@ -108,7 +118,7 @@ export default function DialogCreateProduct({ isOpen, onClose, onCreated }) {
           <Dialog.Content bg="#181824" color="#fff" borderRadius="lg">
             <Dialog.Header>
               <Dialog.Title fontFamily="Montserrat" color="#e05a6d">
-                Criar Produto
+                {editingProduct ? "Editar Produto" : "Criar Produto"}
               </Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
@@ -199,7 +209,7 @@ export default function DialogCreateProduct({ isOpen, onClose, onCreated }) {
                     fontWeight="bold"
                     borderRadius="md"
                     isLoading={isLoading}
-                    onClick={handleCreate}
+                    onClick={handleCreateOrEdit}
                     _hover={{
                       opacity: 0.9,
                       transform: "scale(1.01)",
@@ -207,7 +217,7 @@ export default function DialogCreateProduct({ isOpen, onClose, onCreated }) {
                       bg: "#db5c6e"
                     }}
                   >
-                    Criar produto
+                    {editingProduct ? "Salvar alterações" : "Criar produto"}
                   </Button>
                 </VStack>
               </Box>
