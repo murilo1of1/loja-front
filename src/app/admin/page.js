@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { CiLogout } from "react-icons/ci";
 import { FaReceipt, FaTicketAlt } from "react-icons/fa";
 import api from "@/utils/axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import TabelaProdutos from "@/components/tableProducts";
 import InputPesquisa from "@/components/inputPesquisa";
 import { IoAdd } from "react-icons/io5";
@@ -12,13 +12,19 @@ import DialogCreateProduct from "@/components/dialogCreateProduct";
 import TabelaCupoms from "@/components/tableCupoms";
 import DialogCreateCupom from "@/components/dialogCreateCupom";
 import ConfirmDialog from "@/components/dialogDeleteConfirmation";
+import TabelaBebidas from "@/components/tableDrinks";
+import DialogCreateDrink from "@/components/dialogCreateDrink";
+import TabelaPedidos from "@/components/tableOrders";
 
 export default function Admin() {
   const router = useRouter();
+  const [orders, setOrders] = useState([]);
+  const [drinks, setDrinks] = useState([]);
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [isDialogProductOpen, setIsDialogProductOpen] = useState(false);
   const [isDialogCupomOpen, setIsDialogCupomOpen] = useState(false);
+  const [isDialogDrinkOpen, setIsDialogDrinkOpen] = useState(false);
   const [activeStep, setActiveStep] = useState("pedidos");
   const [cupoms, setCupoms] = useState([]);
   const [editingCupom, setEditingCupom] = useState(null);
@@ -26,7 +32,41 @@ export default function Admin() {
   const [cupomIdToDelete, setCupomIdToDelete] = useState(null);
   const [isDeleteProductOpen, setIsDeleteProductOpen] = useState(false);
   const [productIdToDelete, setProductIdToDelete] = useState(null);
+  const [drinkIdToDelete, setDrinkIdToDelete] = useState(null);
+  const [isDeleteDrinkOpen, setIsDeleteDrinkOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [editingDrink, setEditingDrink] = useState(null);
+  
+  useEffect(() => {
+    getProducts();
+    getCupoms();
+    getDrinks();
+    getOrders();
+  }, []);
+
+  const getOrders = useCallback(async () => {
+    try {
+      const ordersRes = await api.get('/order');
+      const fetchedOrders = ordersRes.data.data || [];
+
+      const orderProductsRes = await api.get('/order-product');
+      const fetchedOrderProducts = orderProductsRes.data.data || [];
+
+      const ordersWithItems = fetchedOrders.map((order) => {
+        const itemsForThisOrder = fetchedOrderProducts.filter(
+          (item) => item.idOrder === order.id
+        );
+        return {
+          ...order,
+          orderProducts: itemsForThisOrder,
+        };
+      });
+      setOrders(ordersWithItems);
+    } catch (error) {
+      console.error('Erro ao buscar pedidos:', error);
+    }
+  }, []);
+
 
   const getProducts = async () => {
     try {
@@ -46,10 +86,15 @@ export default function Admin() {
     }
   };
 
-  useEffect(() => {
-    getProducts();
-    getCupoms();
-  }, []);
+  const getDrinks = async () => {
+    try {
+      const res = await api.get("/drink");
+      setDrinks(res.data.data || []);
+    } catch (error) {
+      console.error("Erro ao buscar bebidas:", error);
+    }
+  };
+
 
   const EditCupom = (cupom) => {
     setEditingCupom(cupom);
@@ -61,6 +106,11 @@ export default function Admin() {
     setIsDialogProductOpen(true);
   };
 
+  const EditDrink = (drink) => {
+    setEditingDrink(drink);
+    setIsDialogDrinkOpen(true);
+  };
+
   const DeleteCupomClick = (id) => {
     setCupomIdToDelete(id);
     setIsDeleteOpen(true);
@@ -69,6 +119,11 @@ export default function Admin() {
   const DeleteProductClick = (id) => {
     setProductIdToDelete(id);
     setIsDeleteProductOpen(true);
+  };
+
+  const DeleteDrinkClick = (id) => {
+    setDrinkIdToDelete(id);
+    setIsDeleteDrinkOpen(true);
   };
 
   const DeleteCupom = async () => {
@@ -84,7 +139,19 @@ export default function Admin() {
     setProductIdToDelete(null);
     getProducts();
   };
+
+  const DeleteDrink = async () => {
+    await api.delete(`/drink/${drinkIdToDelete}`);
+    setIsDeleteDrinkOpen(false);
+    setDrinkIdToDelete(null);
+    getDrinks();
+  };
   
+  const filteredDrinks = drinks.filter(
+    (item) =>
+      item.name?.toLowerCase().includes(search.toLowerCase())
+  );
+
   const filteredProducts = products.filter(
     (item) =>
       item.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -96,7 +163,16 @@ export default function Admin() {
       item.code?.toLowerCase().includes(search.toLowerCase()) ||
       String(item.value)?.toLowerCase().includes(search.toLowerCase()) ||
       item.type?.toLowerCase().includes(search.toLowerCase())
-);
+  );
+
+  const filteredOrders = orders.filter(
+    (order) =>
+      String(order.id).includes(search) ||  
+      order.orderProducts?.some(item => 
+        (item.product?.name || item.drink?.name)?.toLowerCase().includes(search.toLowerCase())
+      )
+  );
+
 
 
   return (
@@ -202,6 +278,17 @@ export default function Admin() {
             <Button
               leftIcon={<FaTicketAlt />}
               variant="ghost"
+              color={activeStep === "bebidas" ? "#e05a6d" : "#fff"}
+              fontFamily="Montserrat"
+              justifyContent="flex-start"
+              _hover={{ bg: "#23233a", color: "#e05a6d" }}
+              onClick={() => setActiveStep("bebidas")}
+            >
+              Bebidas
+            </Button>
+            <Button
+              leftIcon={<FaTicketAlt />}
+              variant="ghost"
               color={activeStep === "cupons" ? "#e05a6d" : "#fff"}
               fontFamily="Montserrat"
               justifyContent="flex-start"
@@ -222,9 +309,16 @@ export default function Admin() {
           w="100%"
         >
           {activeStep === "pedidos" && (
-            <Box>
-              //tabela pedidos 
-            </Box>
+            <>
+              <Box w="100%" display="flex" maxW="900px" mx="auto" mb={1}>
+                <InputPesquisa
+                  placeholder="Pesquisar pedidos..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </Box>
+              <TabelaPedidos items={filteredOrders} />
+            </>
           )}
           {activeStep === "produtos" && (
             <>
@@ -279,7 +373,64 @@ export default function Admin() {
                 description="Você tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita."
               />
             </>
+          )} 
+
+          {activeStep === "bebidas" && (
+            <>
+              <Box w="100%" display="flex" maxW="900px" mx="auto" mb={1}>
+                <InputPesquisa
+                  placeholder="Pesquisar bebidas..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <IconButton
+                  fontFamily="Montserrat"
+                  fontWeight="bold"
+                  bg="#e05a6d"
+                  color="#fff"
+                  size="sm"
+                  borderRadius="md"
+                  h="40px"
+                  ml={1}
+                  mb={-2}
+                  mt={1}
+                  px={5}
+                  _hover={{
+                    bg: "#f6f6f6",
+                    color: "#e05a6d",
+                    opacity: 0.9,
+                    transform: "scale(1.01)",
+                    transition: "0.3s",
+                  }}
+                  onClick={() => setIsDialogDrinkOpen(true)}
+                >
+                  <IoAdd />
+                </IconButton>
+                <DialogCreateDrink
+                  isOpen={isDialogDrinkOpen}
+                  onClose={() => {
+                    setIsDialogDrinkOpen(false);
+                    setEditingDrink(null);
+                  }}
+                  onCreated={getDrinks}
+                  editingProduct={editingDrink}
+                />
+              </Box>  
+                <TabelaBebidas 
+                items={filteredDrinks}
+                onDelete={DeleteDrinkClick}
+                onEdit={EditDrink} />
+              <ConfirmDialog
+                isOpen={isDeleteDrinkOpen}
+                onClose={() => setIsDeleteDrinkOpen(false)}
+                onConfirm={DeleteDrink}
+                title="Excluir produto"
+                description="Você tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita."
+              />
+
+            </>
           )}
+
           {activeStep === "cupons" && (
             <>
               <Box w="100%" display="flex" maxW="900px" mx="auto" mb={1}>

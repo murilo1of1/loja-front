@@ -51,24 +51,28 @@ export default function RegisterInput({ mandarDadosdofilho }) {
       <Stack>
         <Input 
           mt="4%"
+          fontFamily="Montserrat"
           variant="outline"
           placeholder="Digite seu nome completo"
           onChange={(e) => setName(e.target.value)}
         />
         <Input 
           mt="1%"
+          fontFamily="Montserrat"
           variant="outline"
           placeholder="Digite seu apelido"
           onChange={(e) => setUsername(e.target.value)}
         />
         <Input 
           mt="1%"
+          fontFamily="Montserrat"
           variant="outline" ref={withMask('(99) 99999-9999')}
           placeholder="Digite seu telefone"
           onChange={(e) => setPhone(e.target.value)}
         />
         <Input
           mt="1%"
+          fontFamily="Montserrat"
           placeholder="Digite seu CPF" ref={withMask('999.999.999-99')}
           onChange={(e) => setCPF(e.target.value)}
         />
@@ -77,12 +81,12 @@ export default function RegisterInput({ mandarDadosdofilho }) {
             mt="%1"
             collection={rolesCollection}
             width="100%"
-            on  ValueChange={(value) => setRole(value.value[0])}
+            onValueChange={(value) => setRole(value.value[0])}
             >
             <Select.HiddenSelect />
             <Select.Control>
             <Select.Trigger>
-                <Select.ValueText placeholder="Selecione seu cargo" />
+                <Select.ValueText fontFamily="Montserrat" placeholder="Selecione seu cargo" />
             </Select.Trigger>
             <Select.IndicatorGroup>
                 <Select.Indicator />
@@ -104,6 +108,7 @@ export default function RegisterInput({ mandarDadosdofilho }) {
 
         <Input 
           mt="1%"
+          fontFamily="Montserrat"
           variant="outline"
           placeholder="Digite seu email"
           onChange={(e) => setEmail(e.target.value)}
@@ -111,6 +116,7 @@ export default function RegisterInput({ mandarDadosdofilho }) {
 
       <InputGroup mt="1%" w="100%" >
         <PasswordInput
+          fontFamily="Montserrat"
           variant="outline"
           placeholder="Digite sua senha"
           onChange={(e) => setPassword(e.target.value)}

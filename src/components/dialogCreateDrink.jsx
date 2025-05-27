@@ -6,9 +6,7 @@ import {
   Box,
   VStack,
   Input,
-  Select,
   Icon,
-  createListCollection,
   InputGroup,
 } from "@chakra-ui/react";
 import { FormLabel } from "@chakra-ui/form-control";
@@ -20,35 +18,22 @@ import { useState, useEffect } from "react";
 
 export default function DialogCreateProduct({ isOpen, onClose, onCreated, editingProduct }) {
   const [nome, setNome] = useState('');
-  const [descricao, setDescricao] = useState('');
   const [preco, setPreco] = useState('');
-  const [categoria, setCategoria] = useState('');
   const [imagem, setImagem] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
     if (isOpen && editingProduct) {
       setNome(editingProduct.name || '');
-      setDescricao(editingProduct.description || '');
       setPreco(editingProduct.price || '');
       setImagem(editingProduct.image || '');
     } else if (isOpen && !editingProduct) {
       setNome('');
-      setDescricao('');
       setPreco('');
       setImagem('');
     }
     setIsLoading(false);
   }, [isOpen, editingProduct]);
-
-  const categoriasCollection = createListCollection({
-    items: [
-      { label: "Testes", value: 1 },
-      { label: "Pizza", value: 2 },
-      { label: "Hamburguer", value: 3 },
-      { label: "Prato", value: 4 }
-    ],
-  })
 
   const handleFileChange = (event) => {
   console.log("Files recebidos:", event);
@@ -64,34 +49,32 @@ export default function DialogCreateProduct({ isOpen, onClose, onCreated, editin
   try {
     const formData = new FormData();
     formData.append("name", nome);
-    formData.append("description", descricao);
     formData.append("price", preco);
-    formData.append("idCategory", String(categoria));
     if (imagem instanceof File) {
       formData.append("image", imagem);
     }
 
     let response;
     if (editingProduct) {
-      response = await api.patch(`/product/${editingProduct.id}`, formData, {
+      response = await api.patch(`/drink/${editingProduct.id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
     } else {
-      response = await api.post('/product', formData, {
+      response = await api.post('/drink', formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
     }
 
     if (response.status === 200 || response.status === 201) {
       toaster.create({
-        title: editingProduct ? "Produto atualizado com sucesso!" : "Produto criado com sucesso!",
+        title: editingProduct ? "Bebida atualizada com sucesso!" : "Bebida criada com sucesso!",
         type: "success",
       });
       if (onCreated) onCreated();
       onClose();
     } else {
       toaster.create({
-        title: editingProduct ? "Erro ao atualizar produto." : "Erro ao criar produto.",
+        title: editingProduct ? "Erro ao atualizar bebida." : "Erro ao criar bebida.",
         type: "error",
       });
      } 
@@ -118,7 +101,7 @@ export default function DialogCreateProduct({ isOpen, onClose, onCreated, editin
           <Dialog.Content bg="#181824" color="#fff" borderRadius="lg">
             <Dialog.Header>
               <Dialog.Title fontFamily="Montserrat" color="#e05a6d">
-                {editingProduct ? "Editar Produto" : "Criar Produto"}
+                {editingProduct ? "Editar Bebida" : "Criar Bebida"}
               </Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
@@ -131,13 +114,6 @@ export default function DialogCreateProduct({ isOpen, onClose, onCreated, editin
                     value={nome}
                     onChange={e => setNome(e.target.value)}
                   />
-                  <FormLabel fontFamily="Montserrat" color="#e05a6d">Descrição</FormLabel>
-                  <Input
-                    fontFamily="Montserrat"
-                    placeholder="Digite uma breve descrição"
-                    value={descricao}
-                    onChange={e => setDescricao(e.target.value)}
-                  />
                   <FormLabel fontFamily="Montserrat" color="#e05a6d">Preço</FormLabel>
                   <InputGroup startElement= "$">
                     <Input  
@@ -147,33 +123,6 @@ export default function DialogCreateProduct({ isOpen, onClose, onCreated, editin
                       onChange={e => setPreco(e.target.value)}
                     ></Input> 
                   </InputGroup>
-                  <FormLabel fontFamily="Montserrat" color="#e05a6d">Categoria</FormLabel>
-                  <Select.Root
-                    width="100%"
-                    collection={categoriasCollection}
-                    //value={categoria}
-                    onValueChange={(value) => setCategoria(value.value[0])}
-                  >
-                    <Select.HiddenSelect />
-                    <Select.Control>
-                      <Select.Trigger>
-                        <Select.ValueText placeholder="Selecione a categoria" />
-                      </Select.Trigger>
-                      <Select.IndicatorGroup>
-                        <Select.Indicator />
-                      </Select.IndicatorGroup>
-                    </Select.Control>
-                   <Select.Positioner>
-                      <Select.Content bg="#black" color="#fff">
-                        {categoriasCollection.items.map((cat) => (
-                          <Select.Item item={cat} key={cat.value}>
-                            {cat.label}
-                            <Select.ItemIndicator />
-                          </Select.Item>
-                        ))}
-                      </Select.Content>
-                    </Select.Positioner>
-                  </Select.Root>
                   <FormLabel fontFamily="Montserrat" color="#e05a6d">Imagem (endereço ou arraste)</FormLabel>
                   <FileUpload.Root
                     maxW="xl"
@@ -217,7 +166,7 @@ export default function DialogCreateProduct({ isOpen, onClose, onCreated, editin
                       bg: "#db5c6e"
                     }}
                   >
-                    {editingProduct ? "Salvar alterações" : "Criar produto"}
+                    {editingProduct ? "Salvar alterações" : "Criar bebida"}
                   </Button>
                 </VStack>
               </Box>
