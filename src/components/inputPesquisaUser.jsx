@@ -1,6 +1,6 @@
 import { Input, InputGroup } from "@chakra-ui/react";
 
-export default function InputPesquisa({ value, onChange, placeholder }) {
+export default function InputPesquisaUser({ value, onChange, placeholder, ...props }) {
   return (
     <InputGroup mb={-2} mt={1}>
       <Input
@@ -13,6 +13,7 @@ export default function InputPesquisa({ value, onChange, placeholder }) {
         fontFamily="Montserrat"
         fontSize="md"
         borderRadius="md"
+        {...props}
         _focus={{ borderColor: "white", boxShadow: "0 0 0 sm white" }}
 
       />

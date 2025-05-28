@@ -234,8 +234,7 @@ export default function Admin() {
         </Flex>  
       </Flex>
 
-      <Flex pt="70px" h="100vh">
-        
+      <Flex pt="70px" h="100vh">  
         <Box
           as="nav"
           w={["70px", "220px"]}

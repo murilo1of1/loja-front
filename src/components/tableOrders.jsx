@@ -110,7 +110,7 @@ const TabelaPedidos = ({ items, loading, onReloadOrders }) => {
       { label: "Preparando", value: "preparing" },
       { label: "Em entrega", value: "on_delivery" },
       { label: "Entregue", value: "delivered" },
-      { label: "Cancelado", value: "canceled" },
+      { label: "Cancelado", value: "cancelled" },
     ],
   });
 
@@ -183,9 +183,9 @@ const TabelaPedidos = ({ items, loading, onReloadOrders }) => {
                 <Select.Root
                   width="100%"
                   collection={statusOptions}
-                  value={[order.status]}
                   onValueChange={(details) => handleStatusChange(order.id, details.value[0])}
                   disabled={updatingOrderId === order.id}
+                  defaultValue={[order.status || "pending"]}
                 >
                   <Select.HiddenSelect />
                   <Select.Control
