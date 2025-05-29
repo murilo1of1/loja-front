@@ -15,12 +15,18 @@ import InputPesquisaUser from "@/components/inputPesquisaUser";
 import { useState, useEffect } from "react";
 import ProductCard from "@/components/cardProduct";
 import api from "@/utils/axios";
+import DialogInfoUser from "@/components/dialogInfoUser";
+import { jwtDecode } from "jwt-decode";
 
-export default function Admin() {
+export default function User() {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [isDialogInfoUserOpen, setIsDialogInfoUserOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [token , setToken] = useState("");
 
   const categoryMap = {
     "Todos": null,
@@ -33,6 +39,12 @@ export default function Admin() {
     getProducts();
   }, []);
 
+  const openUserDialog = async () => {
+    const user = await getUser();
+    setUserInfo(user);
+    setIsDialogInfoUserOpen(true);
+  };
+
   const getProducts = async () => {
     try {
       const res = await api.get("/product");
@@ -41,6 +53,19 @@ export default function Admin() {
       console.error("Erro ao buscar produtos:", error);
     }
   };
+
+  const getUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return {};
+        const decoded = jwtDecode(token);
+        const res = await api.get(`/users/${decoded.idUsuario}`);
+        return res.data.data || {};
+      } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+        return {};
+      }
+    };
 
   const filteredProducts = products
     .filter(product =>
@@ -94,6 +119,7 @@ export default function Admin() {
               opacity: 0.9,
               transition: "0.3s",
               transform: "scale(1.03)",}}
+              onClick={openUserDialog}
             >
             Usuário
             </Button>
@@ -224,6 +250,11 @@ export default function Admin() {
           </SimpleGrid>
         </Box>
       </Box>
+      <DialogInfoUser
+        isOpen={isDialogInfoUserOpen}
+        onClose={() => setIsDialogInfoUserOpen(false)}
+        user={userInfo}
+      />
     </Box>
   );
 }

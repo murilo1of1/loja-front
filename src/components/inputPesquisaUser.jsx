@@ -2,7 +2,7 @@ import { Input, InputGroup } from "@chakra-ui/react";
 
 export default function InputPesquisaUser({ value, onChange, placeholder, ...props }) {
   return (
-    <InputGroup mb={-2} mt={1}>
+    <InputGroup mb={-5} mt={1}>
       <Input
         value={value}
         onChange={onChange}

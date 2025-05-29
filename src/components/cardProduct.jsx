@@ -8,7 +8,7 @@ export default function ProductCard({ product }) {
         src={product.image}
         alt={product.name}
         borderRadius="md"
-        h="140px"
+        h="150px"
         w="100%"
         objectFit="cover"
         mb={3}

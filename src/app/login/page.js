@@ -17,6 +17,7 @@ export default function LoginPc() {
       if (response.status == 200) {
         const token = response.data.response;
         localStorage.setItem('token', response.data.response);
+        console.log("Token salvo:", localStorage.getItem('token'));
         const decoded = jwtDecode(token);
         const role = decoded.role;
         toaster.create({
