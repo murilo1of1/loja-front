@@ -16,6 +16,9 @@ import { useState, useEffect } from "react";
 import ProductCard from "@/components/cardProduct";
 import api from "@/utils/axios";
 import DialogInfoUser from "@/components/dialogInfoUser";
+import DialogAddressUser from "@/components/dialogAddressUser";
+import DialogOrderUser from "@/components/dialogOrderUser";
+import DialogAddToCart from "@/components/dialogAddToCart";
 import { jwtDecode } from "jwt-decode";
 
 export default function User() {
@@ -24,10 +27,21 @@ export default function User() {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [isDialogInfoUserOpen, setIsDialogInfoUserOpen] = useState(false);
+  const [isDialogAddressUserOpen, setIsDialogAddressUserOpen] = useState(false);
+  const [isDialogOrderUserOpen, setIsDialogOrderUserOpen] = useState(false);
+  const [addressInfo, setAddressInfo] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [token , setToken] = useState("");
+  const [isDialogAddToCartOpen, setIsDialogAddToCartOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [cart, setCart] = useState([]);
 
+  
+  
+  useEffect(() => {
+    getProducts();
+    getAddress();
+  }, []);
+  
   const categoryMap = {
     "Todos": null,
     "Hambúrguer": 3,
@@ -35,15 +49,30 @@ export default function User() {
     "Pratos": 4,
   };
 
-  useEffect(() => {
-    getProducts();
-  }, []);
+  const addToCartClick = (productId) => {
+  setSelectedProductId(productId);
+  setIsDialogAddToCartOpen(true);
+};
+
+  const openOrderDialog = async () => {
+    const user = await getUser();
+    setUserInfo(user);
+    setIsDialogOrderUserOpen(true);
+  }
 
   const openUserDialog = async () => {
     const user = await getUser();
     setUserInfo(user);
     setIsDialogInfoUserOpen(true);
   };
+
+  const openAddressDialog = async () => {
+    const address = await getAddress();
+    const user = await getUser();
+    setAddressInfo(address);
+    setUserInfo(user);
+    setIsDialogAddressUserOpen(true);
+  }
 
   const getProducts = async () => {
     try {
@@ -66,6 +95,19 @@ export default function User() {
         return {};
       }
     };
+
+  const getAddress = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return {};
+        const decoded = jwtDecode(token);
+        const res = await api.get(`/address/${decoded.idUsuario}`);
+        return res.data.data || {};
+      } catch (error) {
+        console.error("Erro ao buscar endereço do usuário:", error);
+        return {};
+      }
+    };  
 
   const filteredProducts = products
     .filter(product =>
@@ -119,7 +161,7 @@ export default function User() {
               opacity: 0.9,
               transition: "0.3s",
               transform: "scale(1.03)",}}
-              onClick={openUserDialog}
+            onClick={openUserDialog}
             >
             Usuário
             </Button>
@@ -136,6 +178,7 @@ export default function User() {
               opacity: 0.9,
               transition: "0.3s",
               transform: "scale(1.03)",}}
+            onClick={openAddressDialog}
             >
             Endereço
             </Button>
@@ -152,6 +195,7 @@ export default function User() {
               opacity: 0.9,
               transition: "0.3s",
               transform: "scale(1.03)",}}
+            onClick={openOrderDialog}
             >
             Pedidos
             </Button>
@@ -245,7 +289,10 @@ export default function User() {
           </Box>
           <SimpleGrid columns={[1, 2, 3, 4, 5]}>
             {filteredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard 
+                key={product.id} 
+                product={product} 
+                onAddToCart={() => addToCartClick(product.id)}/>
             ))}
           </SimpleGrid>
         </Box>
@@ -254,6 +301,26 @@ export default function User() {
         isOpen={isDialogInfoUserOpen}
         onClose={() => setIsDialogInfoUserOpen(false)}
         user={userInfo}
+      />
+      <DialogAddressUser
+        isOpen={isDialogAddressUserOpen}
+        onClose={() => setIsDialogAddressUserOpen(false)}
+        address={addressInfo}
+        user={userInfo}
+      />
+      <DialogOrderUser
+        isOpen={isDialogOrderUserOpen}
+        onClose={() => setIsDialogOrderUserOpen(false)}
+        user={userInfo} 
+      />  
+      <DialogAddToCart
+        isOpen={isDialogAddToCartOpen}
+        onClose={() => setIsDialogAddToCartOpen(false)}
+        productId={selectedProductId}
+        onConfirm={(cartItem) => {
+          setCart(prev => [...prev, cartItem]);
+          setIsDialogAddToCartOpen(false);
+        }}
       />
     </Box>
   );

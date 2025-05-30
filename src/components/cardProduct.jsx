@@ -1,7 +1,7 @@
 import { Box, Image, Text, IconButton, Flex } from "@chakra-ui/react";
 import { IoAdd } from "react-icons/io5";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onAddToCart }) {
   return (
     <Box mb={5} mr={8} bg="#181824" borderRadius="md" p={4}  w="220px">
       <Image
@@ -24,7 +24,8 @@ export default function ProductCard({ product }) {
             color="#fff"  
             borderRadius="md" 
             bg="#e05a6d"
-            _hover={{ bg: "#fff", color: "#e05a6d" }}>
+            _hover={{ bg: "#fff", color: "#e05a6d" }}
+            onClick={onAddToCart}>
           <IoAdd />
         </IconButton>
       </Flex>
